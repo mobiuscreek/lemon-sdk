@@ -5,7 +5,7 @@ from lemon.core.strategy import Strategy
 
 class LemonClient():
     def __init__(self, token: str):
-        self._token = token
+        self.token = token
 
 
     @classmethod
@@ -18,18 +18,25 @@ class LemonClient():
     @classmethod
     def from_env(cls):
         import os
-        credential_file = os.environ.get("LEMON_CREDENTIALS")
+        api_key = os.environ.get("LEMON_CREDENTIALS")
+
+        if api_key is not None:
+           api_key = api_key
+        else:
+            raise ValueError("LEMON_CREDENTIALS not set in ENVIRONMENT_VARIABLES")
+
+        return cls(token=api_key)
 
 
     def account_api(self):
-        return Account(self._token)
+        return Account(self.token)
 
     def order_api(self, *args, **kwargs):
-        return Order(self._token, *args, **kwargs)
+        return Order(self.token, *args, **kwargs)
 
     def market_api(self):
-        return MarketData(self._token)
-    
+        return MarketData(self.token)
+
     def strategy_api(self):
-        return Strategy(self._token)
+        return Strategy()
 
