@@ -9,7 +9,7 @@ class LemonClient():
 
 
     @classmethod
-    def from_yaml(cls, config_file: str):
+    def from_yaml(cls, config_file: str = "credentials.yml"):
         import yaml
         with open(config_file, "r") as yamlfile:
             return cls(token=yaml.load(yamlfile, Loader=yaml.FullLoader)["lemon-markets"]['api_key'])
