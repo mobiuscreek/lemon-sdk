@@ -16,7 +16,8 @@ class Order():
     id:str
     regulatory_information:dict = None
 
-    def __init__(self, isin:str, expired_at, side:str, quantity:int, venue:str, space_id:str, stop_price:int = None, limit_price:int = None, notes:str= None) -> None:
+    def __init__(self, credentials:str, space_id:str, isin:str, expired_at, side:str, quantity:int, venue:str, stop_price:int = None, limit_price:int = None, notes:str= None) -> None:
+        self._token = credentials
         self.space_id = space_id
         self.isin = isin
         self.side = side
