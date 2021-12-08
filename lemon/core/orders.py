@@ -30,16 +30,15 @@ class Order():
         self.__create()
 
     def __create(self):
-        if list(filter(lambda x: x._uuid == self.space_id, Account().spaces))[0].trading_type == "paper":
+        if list(filter(lambda x: x._uuid == self.space_id, Account(self._token).spaces))[0].trading_type == "paper":
             type="paper"
         else:
             type="money"
-
         request = ApiRequest(type=type,
                              endpoint="/orders/",
                              method="POST",
                              body=self.__dict__,
-                             authorization_token=Account().token
+                             authorization_token=self._token
                              )
 
         if request.response['status'] == "ok":
@@ -53,7 +52,7 @@ class Order():
         
         
     def activate(self, pin:str=None)->str:
-        if list(filter(lambda x: x._uuid == self.space_id, Account().spaces))[0].trading_type == "paper":
+        if list(filter(lambda x: x._uuid == self.space_id, Account(self._token).spaces))[0].trading_type == "paper":
             type="paper"
         else:
             type="money"
@@ -64,7 +63,7 @@ class Order():
                              endpoint="/orders/{}/activate/".format(self.id),
                              method="POST",
                              body=data if type=="money" else None,
-                             authorization_token=Account().token
+                             authorization_token=self._token
                              )
         
         return request.response['status']
