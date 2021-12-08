@@ -6,6 +6,8 @@ from lemon.core.account import Account
 
 
 class MarketData(object):
+    def __init__(self, credentials:str) -> None:
+        self._token = credentials
 
     def search_instrument(self, search: str = None, **kwargs):
         """[summary]
@@ -43,7 +45,7 @@ class MarketData(object):
                              endpoint="/instruments/?{}".format(
                                  query_str + payload),
                              method="GET",
-                             authorization_token=Account().token)
+                             authorization_token=self._token)
 
         if request.response['results'] != []:
             df = pd.DataFrame(request.response['results'])
@@ -68,7 +70,7 @@ class MarketData(object):
         request = ApiRequest(type="data",
                              endpoint="/venues/?{}".format(payload),
                              method="GET",
-                             authorization_token=Account().token)
+                             authorization_token=self._token)
 
         if request.response['results'] != []:
             df = pd.DataFrame(request.response['results'])
@@ -95,7 +97,7 @@ class MarketData(object):
                              endpoint="/quotes/?isin={}&mic={}".format(
                                  isin, mic),
                              method="GET",
-                             authorization_token=Account().token)
+                             authorization_token=self._token)
 
         if request.response['results'] != []:
             df = pd.DataFrame(request.response['results'])
@@ -131,7 +133,7 @@ class MarketData(object):
                              endpoint="/ohlc/{}1/?isin={}&from={}&to={}".format(
                                  timespan, isin, start, end),
                              method="GET",
-                             authorization_token=Account().token)
+                             authorization_token=self._token)
 
         if "results" in request.response.keys():
             if request.response['results'] != []:
