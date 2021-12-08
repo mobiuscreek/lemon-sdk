@@ -1,7 +1,7 @@
 import datetime
 import json
 from lemon.common.requests import ApiRequest
-from lemon.core.account import *
+from lemon.core.account import Account
 
 class Order():
     space_id:str

@@ -4,9 +4,8 @@ from lemon.core.orders import Order
 from lemon.core.strategy import Strategy
 
 class LemonClient():
-    def __init__(self, token: str):
+    def __init__(self, token: str) -> None:
         self.token = token
-
 
     @classmethod
     def from_yaml(cls, config_file: str = "credentials.yml"):
