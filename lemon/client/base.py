@@ -3,7 +3,7 @@ from lemon.core.market import MarketData
 from lemon.core.orders import Order
 from lemon.core.strategy import Strategy
 
-class LemonBase():
+class LemonClient():
     def __init__(self, token: str):
         self._token = token
 
