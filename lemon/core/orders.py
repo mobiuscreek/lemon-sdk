@@ -65,8 +65,23 @@ class Order():
                              body=data if type=="money" else None,
                              authorization_token=self._token
                              )
-        
+
         return request.response['status']
 
-    def delete(self)->str:
-        pass
+    def delete(self, pin:str=None)->str:
+        if list(filter(lambda x: x._uuid == self.space_id, Account(self._token).spaces))[0].trading_type == "paper":
+            type="paper"
+        else:
+            type="money"
+            data = json.dumps({"pin": pin})
+
+
+        request = ApiRequest(type=type,
+                             endpoint="/orders/{}/".format(self.id),
+                             method="DELETE",
+                             body=data if type=="money" else None,
+                             authorization_token=self._token
+                             )
+
+        return request.response['status']
+
