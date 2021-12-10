@@ -40,17 +40,15 @@ class Order():
                              body=self.__dict__,
                              authorization_token=self._token
                              )
-
         if request.response['status'] == "ok":
             self.status = request.response['results']['status']
             self.id = request.response['results']['id']
             self.regulatory_information = request.response['results']['regulatory_information']
             self.estimated_price = request.response['results']['estimated_price']
-
             return f"Order with id: {self.id} created!"
         return f"Order cant be created!"
-        
-        
+
+
     def activate(self, pin:str=None)->str:
         if list(filter(lambda x: x._uuid == self.space_id, Account(self._token).spaces))[0].trading_type == "paper":
             type="paper"
@@ -85,3 +83,15 @@ class Order():
 
         return request.response['status']
 
+    def retrieve(self, pin:str=None, *args, **kwargs)->str:
+        if list(filter(lambda x: x._uuid == self.space_id, Account(self._token).spaces))[0].trading_type == "paper":
+            type="paper"
+        else:
+            type="money"
+            data = json.dumps({"pin": pin})
+        request = ApiRequest(type=type,
+                             endpoint="/orders/",
+                             url_params = kwargs,
+                             authorization_token=self._token)
+
+        return request.response
