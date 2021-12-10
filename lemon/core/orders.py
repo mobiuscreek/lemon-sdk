@@ -4,32 +4,19 @@ from lemon.common.requests import ApiRequest
 from lemon.core.account import Account
 
 class Order():
-    space_id:str
-    isin:str
-    side:str
-    quantity:int
-    venue:str
-    stop_price:int = None
-    limit_price:int = None
-    notes:str = None
     status:str
     id:str
     regulatory_information:dict = None
 
-    def __init__(self, credentials:str, space_id:str, isin:str, expired_at, side:str, quantity:int, venue:str, stop_price:int = None, limit_price:int = None, notes:str= None) -> None:
+    def __init__(self, credentials:str, space_id:str) -> None:
         self._token = credentials
         self.space_id = space_id
-        self.isin = isin
-        self.side = side
-        self.quantity = quantity
-        self.venue = venue
-        self.stop_price = stop_price
-        self.limit_price = limit_price
-        self.notes = notes
-        self.expired_at = expired_at
-        self.__create()
 
-    def __create(self):
+    def create(self, isin: str, side: str, quantity: int, venue: str, expires_at: str, stop_price: float=None, limit_price: float=None, notes: str=None):
+        args = locals()
+        args.pop('self')
+        args['space_id'] = self.space_id
+
         if list(filter(lambda x: x._uuid == self.space_id, Account(self._token).spaces))[0].trading_type == "paper":
             type="paper"
         else:
@@ -37,7 +24,7 @@ class Order():
         request = ApiRequest(type=type,
                              endpoint="/orders/",
                              method="POST",
-                             body=self.__dict__,
+                             body=args,
                              authorization_token=self._token
                              )
         if request.response['status'] == "ok":
