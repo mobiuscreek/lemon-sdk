@@ -10,6 +10,7 @@
 - [x] Creating and executing strategies in separate spaces  
 - [x] Pagination handling
 - [ ] Backtesting of strategies
+
 ## Install
 
 Running following command will install all project dependencies. You have to install python and poetry first or using pip by default.
@@ -23,37 +24,66 @@ $ pip install -r requirements.txt
 ## How to start? 
 
 1. Grab your api key on dashboard.lemon.markets 
-2. create a credatianls yml file with the following structure:
+
+2. Configure LemonMarketsClient
+
+* via YAML file
+  Create a credentials yml file with the following structure (by default it uses `credentials.yml`):
 
 ```yaml
 lemon-markets:
     api_key: ************************eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9eyJhdWQiOiJsZW1vbi5tYXJrZXRzIiwiaXNzIjoibGVtb24ubWFya2V0cyIsIweVBkVkRESkp0bk5RS0p3aDFWNlBKTExGa3MwWFREZjVWIn0.elT8WO-wati-pSP3eMxVqgOBZCmOhykyRQru36mWsng*************************
 
 ```
-3. Export your credentials to your enviroment variables: 
 
-```shell
-LEMON_CREDENTIALS='credentials.yml'
-export LEMON_CREDENTIALS
+``` 
+from lemon.client.lemon_client import LemonMarketsClient
+
+client = LemonMarketsClient.from_yaml()
 ```
 
-Tip: If you're using a virtual enviroment you can copy the two lines above and paste them into the activate script of your enviroment. Otherwise you have to export these credentails again, if you have switched your enviroment.
+* via environment variables
 
-4. You're good to go! :) 
+export your Lemon Markets api key as follows:
+
+
+```shell
+export LEMON_CREDENTIALS=<YOUR-API-KEY>
+```
+
+then:
+
+```
+
+from lemon.client.lemon_client import LemonMarketsClient
+
+client = LemonMarketsClient.from_env()
+```
+
+* as an argument
+
+```
+
+from lemon.client.lemon_client import LemonMarketsClient
+
+client = LemonMarketsClient('YOUR-API-KEY')
+```
+
 
 ## How to use?
 For a detailed example usage please open up the example_usage.ipynb notebook.
 
-Get a account instance and show its balance and spaces.
-```Python
-from lemon.core.account import Account
-from lemon.core.market import MarketData
-from lemon.core.orders import  Order
-from lemon.client.auth import credentials
+Use the client to commnunicate with any of the APIs (Account, Order, Market)
 
-# loading credentails from your credentials.yaml file or manually load your key
-$ cred = credentials()
-$ acc = Account(credentials=cred)
+### Account API
+
+```Python
+
+from lemon.client.lemon_client import LemonMarketsClient
+
+client = LemonMarketsClient.from_yaml()
+
+acc = client.account_api()
 
 
 # list your spaces
@@ -62,7 +92,12 @@ $ acc.spaces
  Space(Name: Default, Buying_power: 100000000.0, Risk_limit: 100000000.0, Trading_type: paper]
 ```
 
+### Market API
+
 ```python
+
+m = client.market_api()
+
 # 
 $ m = MarketData()
 $ m.search_instrument("MSCI")
@@ -116,4 +151,25 @@ $ m.ohlc(isin="DE0005933931",timespan="h", start="2021-11-01",end="2021-11-26")
 $ m.quotes(isin="DE0005933931",mic="XMUN")
   isin	        b_v	a_v	  b	      a	              t	                mic
 	DE0005933931	160	160	130.04	130.1	2021-11-29T17:20:55.000+00:00	XMUN
+```
+
+### Order API
+
+
+```Python
+
+from lemon.client.lemonmarkets_client import LemonMarketsClient
+client = LemonMarketsClient.from_yaml()
+
+# The space has to be passed so we have to read it from the Account API
+
+account = client.account_api()
+space = account.space_by_name('Test')[0]._uuid
+order = client.order_api(space) # Or paste it directly here
+
+order.create(isin="US19260Q1076",quantity=1,side="buy",venue="XMUN",expires_at="p2d")
+
+
+order.activate()
+
 ```
